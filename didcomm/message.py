@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Optional, List, Union, Dict
+from typing import Optional, List, Union, Dict, TypeVar, Generic
 
 from didcomm.common.types import JSON_VALUE, DID, DID_URL, JSON_OBJ
 
@@ -41,8 +41,11 @@ class MessageBody:
     body: JSON_OBJ
 
 
+T = TypeVar('T')
+
+
 @dataclass
-class Message(MessageOptionalHeaders, MessageRequiredHeaders, MessageBody):
+class GenericMessage(Generic[T]):
     """
     Message consisting of headers and application/protocol specific data (body).
     In order to convert a message to a DIDComm message for further transporting, call one of the following:
@@ -50,8 +53,24 @@ class Message(MessageOptionalHeaders, MessageRequiredHeaders, MessageBody):
     - `pack_signed` to build a signed DIDComm message
     - `pack_plaintext` to build a Plaintext DIDComm message
     """
+    id: str
+    type: str
+    body: T
+    typ: str = "application/didcomm-plain+json"
+    frm: Optional[DID] = None
+    to: Optional[List[DID]] = None
+    created_time: Optional[int] = None
+    expires_time: Optional[int] = None
+    from_prior: Optional[FromPrior] = None
+    please_ack: Optional[bool] = None
+    ack: Optional[List[str]] = None
+    thid: Optional[str] = None
+    pthid: Optional[str] = None
+    attachments: Optional[List[Attachment]] = None
+    custom_headers: Optional[List[Header]] = None
 
-    pass
+
+Message = GenericMessage[JSON_OBJ]
 
 
 @dataclass(frozen=True)

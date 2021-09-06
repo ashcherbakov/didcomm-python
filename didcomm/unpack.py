@@ -106,7 +106,7 @@ class UnpackConfig:
     Attributes:
         expect_encrypted (bool): Whether the message must be encrypted by the sender. Not expected by default.
         expect_authenticated (bool): Whether the message must be authenticated by the sender via authcrypt. Not expected by default.
-        expect_anonymous_sender (bool): Whether the sender ID must be hidden or protected. Not expected by default.
+        expect_anonymous_sender (bool): Whether the sender ID must be hidden or     protected. Not expected by default.
         expect_non_repudiation (bool): Whether the message must be signed by the sender. Not expected by default.
         expect_signed_by_encrypter (bool): Whether the same DID must be used for encryption and signing. True by default.
         expect_decrypt_by_all_keys (bool): Whether the message must be decryptable by all keys resolved by the secrets resolver. False by default.

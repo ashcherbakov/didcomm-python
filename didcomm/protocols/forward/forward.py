@@ -5,7 +5,7 @@ from typing import List, Union, Optional
 
 from didcomm.common.resolvers import ResolversConfig
 from didcomm.common.types import JSON, DID_OR_DID_URL, JSON_OBJ
-from didcomm.message import MessageRequiredHeaders, MessageOptionalHeaders, Message
+from didcomm.message import MessageOptionalHeaders, Message, GenericMessage
 
 
 @dataclass
@@ -13,10 +13,7 @@ class ForwardBody:
     next: DID_OR_DID_URL
 
 
-@dataclass
-class ForwardMessage(MessageOptionalHeaders, MessageRequiredHeaders, ForwardBody):
-    type: str = "https://didcomm.org/routing/2.0/forward"
-
+ForwardMessage = GenericMessage[ForwardBody]
 
 @dataclass
 class ForwardResult:
@@ -25,10 +22,10 @@ class ForwardResult:
 
 
 async def wrap_in_forward(
-    packed_msg: Union[JSON_OBJ, JSON],
-    routing_key_ids: List[DID_OR_DID_URL],
-    forward_headers: Optional[MessageOptionalHeaders] = None,
-    resolvers_config: Optional[ResolversConfig] = None,
+        packed_msg: Union[JSON_OBJ, JSON],
+        routing_key_ids: List[DID_OR_DID_URL],
+        forward_headers: Optional[MessageOptionalHeaders] = None,
+        resolvers_config: Optional[ResolversConfig] = None,
 ) -> JSON:
     """
     Wraps the given packed DIDComm message in Forward messages for every routing key.
@@ -49,7 +46,7 @@ async def wrap_in_forward(
 
 
 async def unpack_forward(
-    packed_msg: JSON, resolvers_config: Optional[ResolversConfig] = None
+        packed_msg: JSON, resolvers_config: Optional[ResolversConfig] = None
 ) -> ForwardResult:
     """
     Can be called by a Mediator who expects a Forward message to be unpacked
@@ -67,7 +64,7 @@ async def unpack_forward(
 
     :return: Forward plaintext
     """
-    return ForwardResult(forward_msg=ForwardMessage(next="", id=""), forwarded_msg="")
+    return ForwardResult(forward_msg=ForwardMessage(body=ForwardBody(next=""), id="", type="https://didcomm.org/routing/2.0/forward"), forwarded_msg="")
 
 
 def parse_forward(message: Message) -> ForwardResult:
@@ -79,7 +76,7 @@ def parse_forward(message: Message) -> ForwardResult:
     :param message: the message to be converted
     :return: a Forward message instance
     """
-    return ForwardResult(forward_msg=ForwardMessage(next="", id=""), forwarded_msg="")
+    return ForwardResult(forward_msg=ForwardMessage(body=ForwardBody(next=""), id="", type="https://didcomm.org/routing/2.0/forward"), forwarded_msg="")
 
 
 def is_forward(message: Message) -> bool:
