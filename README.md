@@ -60,11 +60,13 @@ See `pack_encrypted` documentation for more details.
 **Authentication encryption** example (most common case):
 
 ```
+resolvers_config = ResolversConfig(secrets_resolver, did_resolver)
+
 # ALICE
 message = Message(body={"aaa": 1, "bbb": 2},
                   id="1234567890", type="my-protocol/1.0",
                   frm=ALICE_DID, to=[BOB_DID])
-pack_result = await pack_encrypted(message=message, frm=ALICE_DID, to=BOB_DID)
+pack_result = await pack_encrypted(resolvers_config, message=message, frm=ALICE_DID, to=BOB_DID)
 packed_msg = pack_result.packed_msg
 print(f"Sending ${packed_msg} to ${pack_result.service_metadata.service_endpoint}")
 
@@ -76,19 +78,21 @@ print(f"Got ${unpack_result.message} message")
 **Anonymous encryption** example:
 
 ```
+resolvers_config = ResolversConfig(secrets_resolver, did_resolver)
 message = Message(body={"aaa": 1, "bbb": 2},
                   id="1234567890", type="my-protocol/1.0",
                   frm=ALICE_DID, to=[BOB_DID])
-pack_result = await pack_encrypted(message=message, to=BOB_DID)
+pack_result = await pack_encrypted(resolvers_config, message=message, to=BOB_DID)
 ```
 
 **Encryption with non-repudiation** example:
 
 ```
+resolvers_config = ResolversConfig(secrets_resolver, did_resolver)
 message = Message(body={"aaa": 1, "bbb": 2},
                   id="1234567890", type="my-protocol/1.0",
                   frm=ALICE_DID, to=[BOB_DID])
-pack_result = await pack_encrypted(message=message, frm=ALICE_DID, to=BOB_DID, sign_frm=ALICE_DID)
+pack_result = await pack_encrypted(resolvers_config, message=message, frm=ALICE_DID, to=BOB_DID, sign_frm=ALICE_DID)
 ```
 
 ### 2. Build an unencrypted but Signed DIDComm message
@@ -104,11 +108,13 @@ relinquishes the sender’s ability to speak off the record.
 See `pack_signed` documentation for more details.
 
 ```
+resolvers_config = ResolversConfig(secrets_resolver, did_resolver)
+
 # ALICE
 message = Message(body={"aaa": 1, "bbb": 2},
                   id="1234567890", type="my-protocol/1.0",
                   frm=ALICE_DID, to=[BOB_DID])
-packed_msg = await pack_signed(message=message, sign_frm=ALICE_DID)
+packed_msg = await pack_signed(resolvers_config, message=message, sign_frm=ALICE_DID)
 packed_msg = pack_result.packed_msg
 print(f"Publishing ${packed_msg}")
 
@@ -127,11 +133,13 @@ A DIDComm message in its plaintext form that
 They are therefore not normally transported across security boundaries. 
 
 ```
+resolvers_config = ResolversConfig(secrets_resolver, did_resolver)
+
 # ALICE
 message = Message(body={"aaa": 1, "bbb": 2},
                   id="1234567890", type="my-protocol/1.0",
                   frm=ALICE_DID, to=[BOB_DID])
-packed_msg = await pack_plaintext(message)
+packed_msg = await pack_plaintext(resolvers_config, message)
 print(f"Publishing ${packed_msg}")
 
 # BOB
